@@ -1,5 +1,60 @@
 # -*- coding: utf-8 -*-
 
+class ItemUpdater:
+    def __init__(self, item):
+        self.item = item
+
+    def update(self):
+        pass
+
+class NormalItemUpdater(ItemUpdater):
+    def update(self):
+        if self.item.quality > 0:
+            self.item.quality -= 1
+        self.item.sell_in -= 1
+        if self.item.sell_in < 0:
+            if self.item.quality > 0:
+                self.item.quality -= 1
+
+class AgedBrieUpdater(ItemUpdater):
+    def update(self):
+        if self.item.quality < 50:
+            self.item.quality += 1
+        self.item.sell_in -= 1
+        if self.item.sell_in < 0:
+            if self.item.quality < 50:
+                self.item.quality += 1
+
+class SulfurasUpdater(ItemUpdater):
+    def update(self):
+        pass
+
+class BackstagePassUpdater(ItemUpdater):
+    def update(self):
+        if self.item.quality < 50:
+            self.item.quality += 1
+            if self.item.sell_in < 11:
+                if self.item.quality < 50:
+                    self.item.quality += 1
+            if self.item.sell_in < 6:
+                if self.item.quality < 50:
+                    self.item.quality += 1
+        self.item.sell_in -= 1
+        if self.item.sell_in < 0:
+            self.item.quality = 0
+
+class UpdaterFactory:
+    registry = {
+        "Aged Brie": AgedBrieUpdater,
+        "Sulfuras, Hand of Ragnaros": SulfurasUpdater,
+        "Backstage passes to a TAFKAL80ETC concert": BackstagePassUpdater
+    }
+
+    @classmethod
+    def get_updater(cls, item):
+        updater_class = cls.registry.get(item.name, NormalItemUpdater)
+        return updater_class(item)
+
 class GildedRose(object):
 
     def __init__(self, items):
@@ -7,33 +62,8 @@ class GildedRose(object):
 
     def update_quality(self):
         for item in self.items:
-            if item.name != "Aged Brie" and item.name != "Backstage passes to a TAFKAL80ETC concert":
-                if item.quality > 0:
-                    if item.name != "Sulfuras, Hand of Ragnaros":
-                        item.quality = item.quality - 1
-            else:
-                if item.quality < 50:
-                    item.quality = item.quality + 1
-                    if item.name == "Backstage passes to a TAFKAL80ETC concert":
-                        if item.sell_in < 11:
-                            if item.quality < 50:
-                                item.quality = item.quality + 1
-                        if item.sell_in < 6:
-                            if item.quality < 50:
-                                item.quality = item.quality + 1
-            if item.name != "Sulfuras, Hand of Ragnaros":
-                item.sell_in = item.sell_in - 1
-            if item.sell_in < 0:
-                if item.name != "Aged Brie":
-                    if item.name != "Backstage passes to a TAFKAL80ETC concert":
-                        if item.quality > 0:
-                            if item.name != "Sulfuras, Hand of Ragnaros":
-                                item.quality = item.quality - 1
-                    else:
-                        item.quality = item.quality - item.quality
-                else:
-                    if item.quality < 50:
-                        item.quality = item.quality + 1
+            updater = UpdaterFactory.get_updater(item)
+            updater.update()
 
 
 class Item:
