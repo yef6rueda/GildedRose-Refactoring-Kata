@@ -43,11 +43,21 @@ class BackstagePassUpdater(ItemUpdater):
         if self.item.sell_in < 0:
             self.item.quality = 0
 
+class ConjuredItemUpdater(ItemUpdater):
+    def update(self):
+        self.item.quality -= 2
+        self.item.sell_in -= 1
+        if self.item.sell_in < 0:
+            self.item.quality -= 2
+        if self.item.quality < 0:
+            self.item.quality = 0
+
 class UpdaterFactory:
     registry = {
         "Aged Brie": AgedBrieUpdater,
         "Sulfuras, Hand of Ragnaros": SulfurasUpdater,
-        "Backstage passes to a TAFKAL80ETC concert": BackstagePassUpdater
+        "Backstage passes to a TAFKAL80ETC concert": BackstagePassUpdater,
+        "Conjured Mana Cake": ConjuredItemUpdater
     }
 
     @classmethod

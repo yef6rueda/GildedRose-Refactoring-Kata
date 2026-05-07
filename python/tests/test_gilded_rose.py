@@ -85,3 +85,31 @@ def test_backstage_passes_after_concert():
     gilded_rose.update_quality()
     assert items[0].sell_in == -1
     assert items[0].quality == 0
+
+def test_conjured_item_before_sell_date():
+    items = [Item("Conjured Mana Cake", 10, 20)]
+    gilded_rose = GildedRose(items)
+    gilded_rose.update_quality()
+    assert items[0].sell_in == 9
+    assert items[0].quality == 18
+
+def test_conjured_item_on_sell_date():
+    items = [Item("Conjured Mana Cake", 0, 20)]
+    gilded_rose = GildedRose(items)
+    gilded_rose.update_quality()
+    assert items[0].sell_in == -1
+    assert items[0].quality == 16
+
+def test_conjured_item_after_sell_date():
+    items = [Item("Conjured Mana Cake", -1, 20)]
+    gilded_rose = GildedRose(items)
+    gilded_rose.update_quality()
+    assert items[0].sell_in == -2
+    assert items[0].quality == 16
+
+def test_conjured_item_quality_never_negative():
+    items = [Item("Conjured Mana Cake", 10, 1)]
+    gilded_rose = GildedRose(items)
+    gilded_rose.update_quality()
+    assert items[0].sell_in == 9
+    assert items[0].quality == 0
