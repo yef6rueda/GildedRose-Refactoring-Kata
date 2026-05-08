@@ -1,5 +1,10 @@
 # -*- coding: utf-8 -*-
 
+MAX_QUALITY = 50
+MIN_QUALITY = 0
+SELL_IN_THRESHOLD_1 = 11
+SELL_IN_THRESHOLD_2 = 6
+
 class ItemUpdater:
     def __init__(self, item):
         self.item = item
@@ -9,20 +14,20 @@ class ItemUpdater:
 
 class NormalItemUpdater(ItemUpdater):
     def update(self):
-        if self.item.quality > 0:
+        if self.item.quality > MIN_QUALITY:
             self.item.quality -= 1
         self.item.sell_in -= 1
         if self.item.sell_in < 0:
-            if self.item.quality > 0:
+            if self.item.quality > MIN_QUALITY:
                 self.item.quality -= 1
 
 class AgedBrieUpdater(ItemUpdater):
     def update(self):
-        if self.item.quality < 50:
+        if self.item.quality < MAX_QUALITY:
             self.item.quality += 1
         self.item.sell_in -= 1
         if self.item.sell_in < 0:
-            if self.item.quality < 50:
+            if self.item.quality < MAX_QUALITY:
                 self.item.quality += 1
 
 class SulfurasUpdater(ItemUpdater):
@@ -31,17 +36,17 @@ class SulfurasUpdater(ItemUpdater):
 
 class BackstagePassUpdater(ItemUpdater):
     def update(self):
-        if self.item.quality < 50:
+        if self.item.quality < MAX_QUALITY:
             self.item.quality += 1
-            if self.item.sell_in < 11:
-                if self.item.quality < 50:
+            if self.item.sell_in < SELL_IN_THRESHOLD_1:
+                if self.item.quality < MAX_QUALITY:
                     self.item.quality += 1
-            if self.item.sell_in < 6:
-                if self.item.quality < 50:
+            if self.item.sell_in < SELL_IN_THRESHOLD_2:
+                if self.item.quality < MAX_QUALITY:
                     self.item.quality += 1
         self.item.sell_in -= 1
         if self.item.sell_in < 0:
-            self.item.quality = 0
+            self.item.quality = MIN_QUALITY
 
 class ConjuredItemUpdater(ItemUpdater):
     def update(self):
@@ -49,8 +54,8 @@ class ConjuredItemUpdater(ItemUpdater):
         self.item.sell_in -= 1
         if self.item.sell_in < 0:
             self.item.quality -= 2
-        if self.item.quality < 0:
-            self.item.quality = 0
+        if self.item.quality < MIN_QUALITY:
+            self.item.quality = MIN_QUALITY
 
 class UpdaterFactory:
     registry = {
