@@ -1,3 +1,19 @@
+# Gilded Rose Refactoring Kata - Python Solution
+
+## Descripción del Proyecto
+Este proyecto consiste en la refactorización de un sistema legado (Gilded Rose) para mejorar su mantenibilidad y extensibilidad. Se migró la lógica original de Java a Python, asegurando la integridad del comportamiento mediante la técnica de **Golden Master**.
+
+## Arquitectura Implementada
+Para eliminar los "Code Smells" de métodos largos y condicionales anidados, se aplicaron los siguientes patrones de diseño:
+
+*   **Patrón Strategy:** Cada tipo de ítem (Aged Brie, Sulfuras, Backstage Passes, Conjured) posee su propia clase `Updater` que encapsula sus reglas de negocio específicas.
+*   **Patrón Factory:** Se implementó una `UpdaterFactory` que se encarga de instanciar el actualizador correcto según el nombre del ítem, desacoplando la lógica de actualización de la clase principal.
+
+## Requerimientos Implementados
+*   Refactorización completa de la lógica de actualización.
+*   Soporte para ítems **Conjured** (degradación doble).
+*   Eliminación de números mágicos mediante constantes globales.
+
 _Support this and all my katas via [Patreon](https://www.patreon.com/EmilyBache)_
 
 # Gilded Rose Refactoring Kata
